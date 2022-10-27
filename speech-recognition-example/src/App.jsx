@@ -1,11 +1,13 @@
 import './App.css';
 
-import SpeechMicComponent from './components/speech-mic/SpeechMicComponent'
+import Home from './views/Home/Home'
 
 function App() {
   return (
     <div className="App">
-      <SpeechMicComponent />
+    <header className="App-header">
+      <Home />
+    </header>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, {useEffect} from 'react'
 
 import MicOffIcon from "@mui/icons-material/MicOff";
 import MicIcon from "@mui/icons-material/Mic";
@@ -7,17 +7,16 @@ import Tooltip from "@mui/material/Tooltip";
 
 import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
 
-const SpeechMicComponent = () => {
+const SpeechMicComponent = ({handleChangeMessage}) => {
 
-    const [message, setMessage] = useState();
     const supporstGeoLocation = navigator.geolocation;
-  
+
     const commands = [
       {
         command: "qué hora es",
         callback: () => {
           const currentDate = new Date();
-          setMessage(`La hora es: ${currentDate.toISOString()}`);
+          handleChangeMessage(`La hora es: ${currentDate.toISOString()}`);
         },
       },
       {
@@ -25,7 +24,7 @@ const SpeechMicComponent = () => {
           "Voy a almorzar * (por favor)",
           "Voy a cenar * (por favor)",
         ],
-        callback: (comida) => setMessage(`Pidiendo ${comida} ...`),
+        callback: (comida) => handleChangeMessage(`Pidiendo ${comida} ...`),
       },  
     ];
   
@@ -36,7 +35,7 @@ const SpeechMicComponent = () => {
           navigator.geolocation.getCurrentPosition((position) => {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
-            setMessage(`Latitud: ${latitude}, Longitud: ${longitude}`);
+            handleChangeMessage(`Latitud: ${latitude}, Longitud: ${longitude}`);
           });
         },
       });
@@ -53,14 +52,18 @@ const SpeechMicComponent = () => {
   
     const startListening = () => {
       resetTranscript();
-      setMessage();
+      handleChangeMessage();
       SpeechRecognition.startListening({
         // Comandos no funcionan con es-HN
         // language: "es-HN",
         continuous: true,
       });
     };
-  
+    
+    useEffect(() => {
+        handleChangeMessage(transcript)
+    },[transcript])
+
     const stopListening = () => {
       SpeechRecognition.stopListening();
     };
@@ -71,9 +74,9 @@ const SpeechMicComponent = () => {
   
     const Icon = listening ? MicIcon : MicOffIcon;
   
+
     return (
-      <div className="App">
-        <header className="App-header">
+      <>
           <Tooltip
             title={
               listening
@@ -95,10 +98,8 @@ const SpeechMicComponent = () => {
               <Icon className="mic-icon" />
             </IconButton>
           </Tooltip>
-          {transcript && <div>{transcript}</div>}
-          {message && <div>{message}</div>}
-        </header>
-      </div>
+
+      </>
     );
 }
 

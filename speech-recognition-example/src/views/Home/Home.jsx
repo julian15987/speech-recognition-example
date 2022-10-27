@@ -3,17 +3,26 @@ import SpeechMicComponent from '../../components/speech-mic/SpeechMicComponent'
 import MessageComponent from '../../components/message/MessageComponent'
 
 const Home = () => {
+    const [command, setCommand] = useState('')
+    const [translate, setTranslate] = useState('')
 
-    const [message, setMessage] = useState('')
+    const handleChangeCommand = (text) => {
+        setCommand(command + '\n' + text)
+    }
 
-    const handleChangeMessage = (text) => {
-        setMessage(text)
+    const handleChangeTranslate = (text) => {
+        setTranslate(text) 
     }
 
     return (
         <>
-            <SpeechMicComponent handleChangeMessage={handleChangeMessage} />
-            <MessageComponent message={message}  />
+            <SpeechMicComponent handleChangeCommand={handleChangeCommand} handleChangeTranslate={handleChangeTranslate}/>
+            <div className={'container_message'}> </div>
+            <h2>Lectura</h2>
+            <MessageComponent message={translate}  />
+            <hr />
+            <h2>Comandos</h2>
+            <MessageComponent message={command}  />
         </>
     )
 }

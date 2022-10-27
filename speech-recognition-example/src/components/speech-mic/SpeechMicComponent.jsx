@@ -7,7 +7,7 @@ import Tooltip from "@mui/material/Tooltip";
 
 import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
 
-const SpeechMicComponent = ({handleChangeMessage}) => {
+const SpeechMicComponent = ({handleChangeCommand, handleChangeTranslate}) => {
 
     const supporstGeoLocation = navigator.geolocation;
 
@@ -16,15 +16,20 @@ const SpeechMicComponent = ({handleChangeMessage}) => {
         command: "qué hora es",
         callback: () => {
           const currentDate = new Date();
-          handleChangeMessage(`La hora es: ${currentDate.toISOString()}`);
+          handleChangeCommand(`Comando recibido - Accion: La hora es: ${currentDate.toISOString()}`);
         },
       },
       {
         command: [
-          "Voy a almorzar * (por favor)",
-          "Voy a cenar * (por favor)",
+          "tocar botón *",
         ],
-        callback: (comida) => handleChangeMessage(`Pidiendo ${comida} ...`),
+        callback: (button) => handleChangeCommand(`Comando recibido - Accion: Haciendo clic en boton "${button}"`),
+      },
+      {
+        command: [
+          "cerrar ventana *",
+        ],
+        callback: (window) => handleChangeCommand(`Comando recibido - Accion: Cerrando ventana "${window}"`),
       },  
     ];
   
@@ -35,7 +40,7 @@ const SpeechMicComponent = ({handleChangeMessage}) => {
           navigator.geolocation.getCurrentPosition((position) => {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
-            handleChangeMessage(`Latitud: ${latitude}, Longitud: ${longitude}`);
+            handleChangeCommand(`Latitud: ${latitude}, Longitud: ${longitude}`);
           });
         },
       });
@@ -49,10 +54,14 @@ const SpeechMicComponent = ({handleChangeMessage}) => {
     } = useSpeechRecognition({
       commands,
     });
+
+    useEffect(() => {
+        handleChangeTranslate(transcript);
+    }, [transcript])
   
     const startListening = () => {
       resetTranscript();
-      handleChangeMessage();
+      handleChangeTranslate();
       SpeechRecognition.startListening({
         // Comandos no funcionan con es-HN
         // language: "es-HN",
@@ -60,10 +69,6 @@ const SpeechMicComponent = ({handleChangeMessage}) => {
       });
     };
     
-    useEffect(() => {
-        handleChangeMessage(transcript)
-    },[transcript])
-
     const stopListening = () => {
       SpeechRecognition.stopListening();
     };

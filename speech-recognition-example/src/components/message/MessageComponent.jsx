@@ -6,7 +6,7 @@ const MessageComponent = ({ message }) => {
         <>
             <TextareaAutosize
                 placeholder="..."
-                style={{ width: 800, height: 500 }}
+                style={{ width: 800, height: 300 }}
                 defaultValue={message}
             />
             
